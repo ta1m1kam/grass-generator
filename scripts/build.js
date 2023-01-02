@@ -2,7 +2,7 @@ const { build } = require('esbuild');
 const glob = require('glob');
 const entryPoints = glob.sync('./src/**/*.ts');
 
-const isWatchMode = process.argv[2] === "watch";
+const isWatchMode = process.argv[2] === 'watch';
 
 build({
   entryPoints,
@@ -10,7 +10,7 @@ build({
   outdir: './lib',
   platform: 'browser',
   external: [],
-  watch: process.argv[2] === "watch"
+  watch: process.argv[2] === 'watch',
 });
 
 console.info(`build completed!`);

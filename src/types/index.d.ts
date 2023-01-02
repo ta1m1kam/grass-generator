@@ -1,4 +1,4 @@
-export interface Theme  {
+export interface Theme {
   background: string;
   text: string;
   meta: string;
@@ -10,7 +10,7 @@ export interface Theme  {
 
 export interface DataStruct {
   years: DataStructYear[];
-  contributions: DataStructContribution[]; 
+  contributions: DataStructContribution[];
 }
 
 export interface DataStructYear {
@@ -19,7 +19,7 @@ export interface DataStructYear {
   range: {
     start: string;
     end: string;
-  }
+  };
 }
 
 export interface DataStructContribution {
@@ -31,7 +31,7 @@ export interface DataStructContribution {
 
 export interface Options {
   themeName?: keyof typeof themes;
-  customTheme: Theme;  
+  customTheme: Theme;
   // skipHeader?: boolean;
   // skipAxisLabel?: boolean;
   username: string;

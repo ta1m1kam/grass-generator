@@ -1,15 +1,18 @@
-import type { 
-  DrawYearOptions, 
-  GraphEntry, 
-  Options 
-} from 'types';
+import type { DrawYearOptions, GraphEntry, Options } from 'types';
 import { themes } from 'themes/themes';
 import { getDateInfo } from 'utils/data-helper';
-import { DEFAULT_FONT_FACE, DATE_FORMAT, BOX_WIDTH, BOX_MARGIN, TEXT_HEIGHT, YEAR_HEIGHT_CANVAS, CANVAS_MARGIN } from 'utils/constants';
+import {
+  DEFAULT_FONT_FACE,
+  DATE_FORMAT,
+  BOX_WIDTH,
+  BOX_MARGIN,
+  TEXT_HEIGHT,
+  YEAR_HEIGHT_CANVAS,
+  CANVAS_MARGIN,
+} from 'utils/constants';
 import dayjs from 'dayjs';
 import weekday from 'dayjs/plugin/weekday';
 dayjs.extend(weekday);
-
 
 const drawYear = (ctx: CanvasRenderingContext2D, options: DrawYearOptions) => {
   const {
@@ -22,11 +25,11 @@ const drawYear = (ctx: CanvasRenderingContext2D, options: DrawYearOptions) => {
 
   const theme = themes.standard;
 
-  const currentDate = dayjs()
-  const thisYear = currentDate.format("YYYY");
+  const currentDate = dayjs();
+  const thisYear = currentDate.format('YYYY');
   const lastDate = year.year === thisYear ? currentDate : dayjs(year.range.end);
   const firstRealDate = dayjs(`${year.year}-01-01`);
-  const firstDate = dayjs(firstRealDate).startOf("week");
+  const firstDate = dayjs(firstRealDate).startOf('week');
 
   let nextDate = firstDate;
   const firstRowDates: GraphEntry[] = [];
@@ -36,20 +39,20 @@ const drawYear = (ctx: CanvasRenderingContext2D, options: DrawYearOptions) => {
     const date = nextDate.format(DATE_FORMAT);
     firstRowDates.push({
       date,
-      info: getDateInfo(data, date)
+      info: getDateInfo(data, date),
     });
-    nextDate = nextDate.add(1, "week");
+    nextDate = nextDate.add(1, 'week');
   }
 
   graphEntries.push(firstRowDates);
 
   for (let i = 1; i < 7; i += 1) {
     graphEntries.push(
-      firstRowDates.map(dateObj => {
-        const date = dayjs(dateObj.date).weekday(i).format( DATE_FORMAT);
+      firstRowDates.map((dateObj) => {
+        const date = dayjs(dateObj.date).weekday(i).format(DATE_FORMAT);
         return {
           date,
-          info: getDateInfo(data, date)
+          info: getDateInfo(data, date),
         };
       })
     );
@@ -83,30 +86,33 @@ const drawYear = (ctx: CanvasRenderingContext2D, options: DrawYearOptions) => {
     if (monthChanged && !firstMonthIsDec) {
       ctx.fillStyle = theme.meta;
       ctx.fillText(
-        date.format( "MMM"),
+        date.format('MMM'),
         offsetX + (BOX_WIDTH + BOX_MARGIN) * y,
         offsetY
       );
       lastCountedMonth = month;
     }
   }
-}
+};
 
-export const drawGrassCanvas = (canvas: HTMLCanvasElement, options: Options) => {
+export const drawGrassCanvas = (
+  canvas: HTMLCanvasElement,
+  options: Options
+) => {
   const { data } = options;
 
-  const ctx = canvas.getContext("2d");
-  let headerOffset= 0;
+  const ctx = canvas.getContext('2d');
+  const headerOffset = 0;
 
   if (!ctx) {
-    throw new Error("Could not get 2d context from Canvas");
+    throw new Error('Could not get 2d context from Canvas');
   }
 
-  const height = data.years.length * YEAR_HEIGHT_CANVAS + CANVAS_MARGIN + headerOffset + 10;
+  const height =
+    data.years.length * YEAR_HEIGHT_CANVAS + CANVAS_MARGIN + headerOffset + 10;
   const width = 53 * (BOX_WIDTH + BOX_MARGIN) + CANVAS_MARGIN * 2;
   canvas.height = height;
   canvas.width = width;
-
 
   data.years.forEach((year, i) => {
     const offsetY = YEAR_HEIGHT_CANVAS * i + CANVAS_MARGIN + headerOffset;
@@ -116,7 +122,7 @@ export const drawGrassCanvas = (canvas: HTMLCanvasElement, options: Options) => 
       year,
       offsetX,
       offsetY,
-      data
+      data,
     });
-  })
-}
+  });
+};
