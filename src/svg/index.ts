@@ -1,17 +1,17 @@
+import { getDateInfo } from './../utils/data-helper';
 import type { 
   DrawYearOptions, 
   GraphEntry, 
-  Options 
+  Options
 } from 'types';
-import { themes } from 'themes/themes';
-import { getDateInfo } from 'utils/data-helper';
-import { DEFAULT_FONT_FACE, DATE_FORMAT, BOX_WIDTH, BOX_MARGIN, TEXT_HEIGHT, YEAR_HEIGHT_CANVAS, CANVAS_MARGIN } from 'utils/constants';
+import { themes } from "themes/themes";
+import { DEFAULT_FONT_FACE, DATE_FORMAT, BOX_WIDTH, BOX_MARGIN, TEXT_HEIGHT, YEAR_HEIGHT_SVG, CANVAS_MARGIN } from 'utils/constants';
 import dayjs from 'dayjs';
 import weekday from 'dayjs/plugin/weekday';
 dayjs.extend(weekday);
 
 
-const drawYear = (ctx: CanvasRenderingContext2D, options: DrawYearOptions) => {
+const drawYear = (svg: SVGSVGElement, options: DrawYearOptions) => {
   const {
     year,
     data,
@@ -63,13 +63,16 @@ const drawYear = (ctx: CanvasRenderingContext2D, options: DrawYearOptions) => {
         continue;
       }
       const color = (theme as any)[`grade${day.info.intensity}`];
-      ctx.fillStyle = color;
-      ctx.fillRect(
-        offsetX + (BOX_WIDTH + BOX_MARGIN) * x,
-        offsetY + TEXT_HEIGHT + (BOX_WIDTH + BOX_MARGIN) * y,
-        10,
-        10
-      );
+
+      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      rect.setAttribute('x', `${offsetX + (BOX_WIDTH + BOX_MARGIN) * x}`)
+      rect.setAttribute('y', `${offsetY + TEXT_HEIGHT + (BOX_WIDTH + BOX_MARGIN) * y}`)
+      rect.setAttribute('width', "10")
+      rect.setAttribute('height', "10")
+      rect.setAttribute("fill", color)
+      rect.setAttribute("data-count", `${day.info.count}`)
+      rect.setAttribute("data-date", day.info.date)
+      svg.appendChild(rect);
     }
   }
 
@@ -81,37 +84,34 @@ const drawYear = (ctx: CanvasRenderingContext2D, options: DrawYearOptions) => {
     const firstMonthIsDec = month === 12 && y === 0;
     const monthChanged = month !== lastCountedMonth;
     if (monthChanged && !firstMonthIsDec) {
-      ctx.fillStyle = theme.meta;
-      ctx.fillText(
-        date.format( "MMM"),
-        offsetX + (BOX_WIDTH + BOX_MARGIN) * y,
-        offsetY
-      );
+      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      text.textContent = date.format("MMM");
+      text.setAttribute('x', `${offsetX + (BOX_WIDTH + BOX_MARGIN) * y}`)
+      text.setAttribute('y', `${offsetY}`)
+      text.setAttribute("style", `color: ${theme.meta}; font-size: 12px`)
+      svg.appendChild(text);
       lastCountedMonth = month;
     }
   }
 }
 
-export const drawGrassCanvas = (canvas: HTMLCanvasElement, options: Options) => {
+export const drawGrassSvg = (svgElement: HTMLElement, options: Options) => {
   const { data } = options;
 
-  const ctx = canvas.getContext("2d");
   let headerOffset= 0;
-
-  if (!ctx) {
-    throw new Error("Could not get 2d context from Canvas");
-  }
-
-  const height = data.years.length * YEAR_HEIGHT_CANVAS + CANVAS_MARGIN + headerOffset + 10;
+  const height = data.years.length * YEAR_HEIGHT_SVG + CANVAS_MARGIN + headerOffset + 10;
   const width = 53 * (BOX_WIDTH + BOX_MARGIN) + CANVAS_MARGIN * 2;
-  canvas.height = height;
-  canvas.width = width;
 
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute("width", `${width}`);
+  svg.setAttribute("height", `${height}`);
+  svg.setAttribute("viewbox", `0 0 ${width} ${height}`);
+  svg.setAttribute('style', 'background-color: #fff;');
 
   data.years.forEach((year, i) => {
-    const offsetY = YEAR_HEIGHT_CANVAS * i + CANVAS_MARGIN + headerOffset;
+    const offsetY = YEAR_HEIGHT_SVG * i + CANVAS_MARGIN + headerOffset;
     const offsetX = CANVAS_MARGIN;
-    drawYear(ctx, {
+    drawYear(svg, {
       ...options,
       year,
       offsetX,
@@ -119,4 +119,5 @@ export const drawGrassCanvas = (canvas: HTMLCanvasElement, options: Options) => 
       data
     });
   })
+  svgElement.appendChild( svg);
 }

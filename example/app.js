@@ -1,4 +1,5 @@
-import { drawGrass } from '../lib';
+import { drawGrassCanvas, drawGrassSvg } from '../lib';
 import mockData from "./mock.json";
 
-drawGrass(document.getElementById("canvas"), { data: mockData });
+drawGrassCanvas(document.getElementById("canvas"), { data: mockData });
+drawGrassSvg(document.getElementById("svg"), { data: mockData });
