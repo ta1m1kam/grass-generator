@@ -6,7 +6,7 @@
 </p>
 
 
-# Example
+## Example
 
 <p align="center">
   <img src="docs/images/example.png" width="700">
