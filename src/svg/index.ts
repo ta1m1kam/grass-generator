@@ -2,13 +2,13 @@ import { getDateInfo } from './../utils/data-helper';
 import type { DrawYearOptions, GraphEntry, Options } from 'types';
 import { themes } from 'themes/themes';
 import {
-  DEFAULT_FONT_FACE,
   DATE_FORMAT,
   BOX_WIDTH,
   BOX_MARGIN,
   TEXT_HEIGHT,
   YEAR_HEIGHT_SVG,
-  CANVAS_MARGIN,
+  SVG_MARGIN,
+  TEXT_WIDTH,
 } from 'utils/constants';
 import dayjs from 'dayjs';
 import weekday from 'dayjs/plugin/weekday';
@@ -18,7 +18,6 @@ const drawYear = (svg: SVGSVGElement, options: DrawYearOptions) => {
   const {
     year,
     data,
-    fontFace = DEFAULT_FONT_FACE,
     offsetX = 0,
     offsetY = 0,
   } = options;
@@ -100,10 +99,25 @@ const drawYear = (svg: SVGSVGElement, options: DrawYearOptions) => {
       text.textContent = date.format('MMM');
       text.setAttribute('x', `${offsetX + (BOX_WIDTH + BOX_MARGIN) * y}`);
       text.setAttribute('y', `${offsetY}`);
-      text.setAttribute('style', `color: ${theme.meta}; font-size: 12px`);
+      text.setAttribute('style', `color: ${theme.meta}; font-size: 11px`);
       svg.appendChild(text);
       lastCountedMonth = month;
     }
+  }
+
+  // Draw Day Label
+  if (!options.disableAxisLabel?.vertical) {
+    ["Mon", "Wed", "Fri"].forEach((day, i) => {
+      const text = document.createElementNS(
+        'http://www.w3.org/2000/svg',
+        'text'
+      );
+      text.textContent = day;
+      text.setAttribute('x', `${SVG_MARGIN}`);
+      text.setAttribute('y', `${offsetY + TEXT_HEIGHT + BOX_WIDTH * (i+1)*2 + BOX_MARGIN * i*2}`);
+      text.setAttribute('style', `color: ${theme.meta}; font-size: 11px`);
+      svg.appendChild(text);
+    })
   }
 };
 
@@ -111,9 +125,17 @@ export const drawGrassSvg = (svgElement: HTMLElement, options: Options) => {
   const { data } = options;
 
   const headerOffset = 0;
-  const height =
-    data.years.length * YEAR_HEIGHT_SVG + CANVAS_MARGIN + headerOffset + 10;
-  const width = 53 * (BOX_WIDTH + BOX_MARGIN) + CANVAS_MARGIN * 2;
+  let sideOffset = 0;
+
+
+  if (!options.disableAxisLabel?.vertical) {
+    sideOffset = TEXT_WIDTH * 4
+  }
+
+  const baseHeight = YEAR_HEIGHT_SVG + SVG_MARGIN + headerOffset + 10;
+  const yearsLength = options.targetYear ? 1 : data.years.length;
+  const height = yearsLength * baseHeight;
+  const width = 53 * (BOX_WIDTH + BOX_MARGIN) + SVG_MARGIN * 2 + sideOffset;
 
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svg.setAttribute('width', `${width}`);
@@ -121,9 +143,22 @@ export const drawGrassSvg = (svgElement: HTMLElement, options: Options) => {
   svg.setAttribute('viewbox', `0 0 ${width} ${height}`);
   svg.setAttribute('style', 'background-color: #fff;');
 
-  data.years.forEach((year, i) => {
-    const offsetY = YEAR_HEIGHT_SVG * i + CANVAS_MARGIN + headerOffset;
-    const offsetX = CANVAS_MARGIN;
+  if (!options.targetYear) {
+    data.years.forEach((year, i) => {
+      const offsetY = YEAR_HEIGHT_SVG * i + SVG_MARGIN + headerOffset;
+      const offsetX = SVG_MARGIN;
+      drawYear(svg, {
+        ...options,
+        year,
+        offsetX,
+        offsetY,
+        data,
+      });
+    });
+  } else {
+    const year = data.years.filter(year => year.year === options.targetYear)[0];
+    const offsetY = SVG_MARGIN + headerOffset;
+    const offsetX = SVG_MARGIN + sideOffset;
     drawYear(svg, {
       ...options,
       year,
@@ -131,6 +166,6 @@ export const drawGrassSvg = (svgElement: HTMLElement, options: Options) => {
       offsetY,
       data,
     });
-  });
+  }
   svgElement.appendChild(svg);
 };

@@ -1,4 +1,5 @@
 export const TEXT_HEIGHT = 8;
+export const TEXT_WIDTH = 8;
 export const BOX_WIDTH = 10;
 export const BOX_MARGIN = 2;
 export const CANVAS_MARGIN = 20;

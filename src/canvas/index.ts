@@ -1,14 +1,13 @@
+import { TEXT_WIDTH } from './../utils/constants';
 import type { DrawYearOptions, GraphEntry, Options } from 'types';
 import { themes } from 'themes/themes';
 import { getDateInfo } from 'utils/data-helper';
 import {
-  DEFAULT_FONT_FACE,
   DATE_FORMAT,
   BOX_WIDTH,
   BOX_MARGIN,
   TEXT_HEIGHT,
   YEAR_HEIGHT_CANVAS,
-  CANVAS_MARGIN,
   CANVAS_MARGIN,
 } from 'utils/constants';
 import dayjs from 'dayjs';
@@ -121,7 +120,7 @@ export const drawGrassCanvas = (
   }
 
   if (!options.disableAxisLabel?.vertical) {
-    sideOffset = TEXT_HEIGHT * 3 + BOX_MARGIN
+    sideOffset = TEXT_WIDTH * 4;
   }
 
   const baseHeight = YEAR_HEIGHT_CANVAS + CANVAS_MARGIN + headerOffset + 10;
