@@ -33,7 +33,7 @@ export interface Options {
   themeName?: keyof typeof themes;
   customTheme: Theme;
   // skipHeader?: boolean;
-  // skipAxisLabel?: boolean;
+  disableAxisLabel?: { vertical?: boolean, horizontal?: boolean };
   data: DataStruct;
   fontFace?: string;
   footerText?: string;

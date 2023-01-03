@@ -9,6 +9,7 @@ import {
   TEXT_HEIGHT,
   YEAR_HEIGHT_CANVAS,
   CANVAS_MARGIN,
+  CANVAS_MARGIN,
 } from 'utils/constants';
 import dayjs from 'dayjs';
 import weekday from 'dayjs/plugin/weekday';
@@ -18,7 +19,6 @@ const drawYear = (ctx: CanvasRenderingContext2D, options: DrawYearOptions) => {
   const {
     year,
     data,
-    fontFace = DEFAULT_FONT_FACE,
     offsetX = 0,
     offsetY = 0,
   } = options;
@@ -83,7 +83,7 @@ const drawYear = (ctx: CanvasRenderingContext2D, options: DrawYearOptions) => {
     const month = date.month() + 1;
     const firstMonthIsDec = month === 12 && y === 0;
     const monthChanged = month !== lastCountedMonth;
-    if (monthChanged && !firstMonthIsDec) {
+    if (!options.disableAxisLabel?.horizontal && monthChanged && !firstMonthIsDec) {
       ctx.fillStyle = theme.meta;
       ctx.fillText(
         date.format('MMM'),
@@ -92,6 +92,17 @@ const drawYear = (ctx: CanvasRenderingContext2D, options: DrawYearOptions) => {
       );
       lastCountedMonth = month;
     }
+  }
+
+  // Draw Day Label
+  if (!options.disableAxisLabel?.vertical) {
+    ["Mon", "Wed", "Fri"].forEach((day, i) => {
+      ctx.fillText(
+        day,
+        CANVAS_MARGIN,
+        offsetY + TEXT_HEIGHT + BOX_WIDTH * (i+1)*2 + BOX_MARGIN * i*2
+      )
+    })
   }
 };
 
@@ -103,22 +114,27 @@ export const drawGrassCanvas = (
 
   const ctx = canvas.getContext('2d');
   const headerOffset = 0;
+  let sideOffset = 0;
 
   if (!ctx) {
     throw new Error('Could not get 2d context from Canvas');
   }
 
+  if (!options.disableAxisLabel?.vertical) {
+    sideOffset = TEXT_HEIGHT * 3 + BOX_MARGIN
+  }
+
   const baseHeight = YEAR_HEIGHT_CANVAS + CANVAS_MARGIN + headerOffset + 10;
   const yearsLength = options.targetYear ? 1 : data.years.length;
   const height = yearsLength * baseHeight;
-  const width = 53 * (BOX_WIDTH + BOX_MARGIN) + CANVAS_MARGIN * 2;
+  const width = 53 * (BOX_WIDTH + BOX_MARGIN) + CANVAS_MARGIN * 2 + sideOffset;
   canvas.height = height;
   canvas.width = width;
 
   if (!options.targetYear) {
     data.years.forEach((year, i) => {
       const offsetY = YEAR_HEIGHT_CANVAS * i + CANVAS_MARGIN + headerOffset;
-      const offsetX = CANVAS_MARGIN;
+      const offsetX = CANVAS_MARGIN + sideOffset;
       drawYear(ctx, {
         ...options,
         year,
@@ -130,7 +146,7 @@ export const drawGrassCanvas = (
   } else {
     const year = data.years.filter(year => year.year === options.targetYear)[0];
     const offsetY = CANVAS_MARGIN + headerOffset;
-    const offsetX = CANVAS_MARGIN;
+    const offsetX = CANVAS_MARGIN + sideOffset;
     drawYear(ctx, {
       ...options,
       year,
