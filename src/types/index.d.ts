@@ -1,3 +1,4 @@
+import { themes } from 'themes/themes';
 export interface Theme {
   background: string;
   text: string;
@@ -6,6 +7,7 @@ export interface Theme {
   grade3: string;
   grade2: string;
   grade1: string;
+  grade0: string;
 }
 
 export interface DataStruct {
@@ -40,6 +42,10 @@ export interface Options {
   targetYear?: string;
 }
 
+export interface DrawBaseOptions extends Options {
+  width: number;
+  height: number;
+}
 export interface DrawYearOptions extends Options {
   year: DataStructYear;
   offsetX?: number;

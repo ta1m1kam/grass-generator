@@ -1,6 +1,6 @@
+import { getTheme } from './../themes/themes';
 import { TEXT_WIDTH } from './../utils/constants';
-import type { DrawYearOptions, GraphEntry, Options } from 'types';
-import { themes } from 'themes/themes';
+import type { DrawBaseOptions, DrawYearOptions, GraphEntry, Options } from 'types';
 import { getDateInfo } from 'utils/data-helper';
 import {
   DATE_FORMAT,
@@ -14,6 +14,16 @@ import dayjs from 'dayjs';
 import weekday from 'dayjs/plugin/weekday';
 dayjs.extend(weekday);
 
+const drawBase = (ctx: CanvasRenderingContext2D, options: DrawBaseOptions) => {
+  const {
+    width,
+    height
+  } = options;
+  const theme = getTheme(options);
+  ctx.fillStyle = theme.background;
+  ctx.fillRect(0, 0, width, height);
+}
+
 const drawYear = (ctx: CanvasRenderingContext2D, options: DrawYearOptions) => {
   const {
     year,
@@ -22,7 +32,7 @@ const drawYear = (ctx: CanvasRenderingContext2D, options: DrawYearOptions) => {
     offsetY = 0,
   } = options;
 
-  const theme = themes.standard;
+  const theme = getTheme(options);
 
   const currentDate = dayjs();
   const thisYear = currentDate.format('YYYY');
@@ -129,6 +139,8 @@ export const drawGrassCanvas = (
   const width = 53 * (BOX_WIDTH + BOX_MARGIN) + CANVAS_MARGIN * 2 + sideOffset;
   canvas.height = height;
   canvas.width = width;
+
+  drawBase(ctx, { ...options, width, height });
 
   if (!options.targetYear) {
     data.years.forEach((year, i) => {

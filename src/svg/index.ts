@@ -1,3 +1,5 @@
+import { getTheme } from './../themes/themes';
+import { DrawBaseOptions } from './../types/index.d';
 import { getDateInfo } from './../utils/data-helper';
 import type { DrawYearOptions, GraphEntry, Options } from 'types';
 import { themes } from 'themes/themes';
@@ -14,6 +16,10 @@ import dayjs from 'dayjs';
 import weekday from 'dayjs/plugin/weekday';
 dayjs.extend(weekday);
 
+const drawBase = (svg: SVGSVGElement, options: DrawBaseOptions) => {
+  const theme = getTheme(options);
+  svg.setAttribute('style', `background-color: ${theme.background}; color: ${theme.meta}`);
+}
 const drawYear = (svg: SVGSVGElement, options: DrawYearOptions) => {
   const {
     year,
@@ -22,7 +28,7 @@ const drawYear = (svg: SVGSVGElement, options: DrawYearOptions) => {
     offsetY = 0,
   } = options;
 
-  const theme = themes.standard;
+  const theme = getTheme(options);
 
   const currentDate = dayjs();
   const thisYear = currentDate.format('YYYY');
@@ -99,7 +105,7 @@ const drawYear = (svg: SVGSVGElement, options: DrawYearOptions) => {
       text.textContent = date.format('MMM');
       text.setAttribute('x', `${offsetX + (BOX_WIDTH + BOX_MARGIN) * y}`);
       text.setAttribute('y', `${offsetY}`);
-      text.setAttribute('style', `color: ${theme.meta}; font-size: 11px`);
+      text.setAttribute('style', `fill: ${theme.meta}; font-size: 10px`);
       svg.appendChild(text);
       lastCountedMonth = month;
     }
@@ -115,7 +121,7 @@ const drawYear = (svg: SVGSVGElement, options: DrawYearOptions) => {
       text.textContent = day;
       text.setAttribute('x', `${SVG_MARGIN}`);
       text.setAttribute('y', `${offsetY + TEXT_HEIGHT + BOX_WIDTH * (i+1)*2 + BOX_MARGIN * i*2}`);
-      text.setAttribute('style', `color: ${theme.meta}; font-size: 11px`);
+      text.setAttribute('style', `fill: ${theme.meta}; font-size: 10px`);
       svg.appendChild(text);
     })
   }
@@ -141,7 +147,8 @@ export const drawGrassSvg = (svgElement: HTMLElement, options: Options) => {
   svg.setAttribute('width', `${width}`);
   svg.setAttribute('height', `${height}`);
   svg.setAttribute('viewbox', `0 0 ${width} ${height}`);
-  svg.setAttribute('style', 'background-color: #fff;');
+
+  drawBase(svg, { ...options, width, height });
 
   if (!options.targetYear) {
     data.years.forEach((year, i) => {
