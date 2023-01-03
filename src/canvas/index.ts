@@ -108,14 +108,28 @@ export const drawGrassCanvas = (
     throw new Error('Could not get 2d context from Canvas');
   }
 
-  const height =
-    data.years.length * YEAR_HEIGHT_CANVAS + CANVAS_MARGIN + headerOffset + 10;
+  const baseHeight = YEAR_HEIGHT_CANVAS + CANVAS_MARGIN + headerOffset + 10;
+  const yearsLength = options.targetYear ? 1 : data.years.length;
+  const height = yearsLength * baseHeight;
   const width = 53 * (BOX_WIDTH + BOX_MARGIN) + CANVAS_MARGIN * 2;
   canvas.height = height;
   canvas.width = width;
 
-  data.years.forEach((year, i) => {
-    const offsetY = YEAR_HEIGHT_CANVAS * i + CANVAS_MARGIN + headerOffset;
+  if (!options.targetYear) {
+    data.years.forEach((year, i) => {
+      const offsetY = YEAR_HEIGHT_CANVAS * i + CANVAS_MARGIN + headerOffset;
+      const offsetX = CANVAS_MARGIN;
+      drawYear(ctx, {
+        ...options,
+        year,
+        offsetX,
+        offsetY,
+        data,
+      });
+    });
+  } else {
+    const year = data.years.filter(year => year.year === options.targetYear)[0];
+    const offsetY = CANVAS_MARGIN + headerOffset;
     const offsetX = CANVAS_MARGIN;
     drawYear(ctx, {
       ...options,
@@ -124,5 +138,5 @@ export const drawGrassCanvas = (
       offsetY,
       data,
     });
-  });
+  }
 };

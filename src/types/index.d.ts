@@ -34,10 +34,10 @@ export interface Options {
   customTheme: Theme;
   // skipHeader?: boolean;
   // skipAxisLabel?: boolean;
-  username: string;
   data: DataStruct;
   fontFace?: string;
   footerText?: string;
+  targetYear?: string;
 }
 
 export interface DrawYearOptions extends Options {
