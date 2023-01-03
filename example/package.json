@@ -9,7 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "grass-generate": "file:.."
+    "grass-generator": "^1.0.1"
   },
   "devDependencies": {
     "esbuild": "^0.16.12"

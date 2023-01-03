@@ -1,4 +1,4 @@
-import { drawGrassCanvas, drawGrassSvg } from '../lib';
+import { drawGrassCanvas, drawGrassSvg } from 'grass-generator';
 import mockData from './mock.json';
 
 drawGrassCanvas(document.getElementById('canvas-standard'), { data: mockData, targetYear: "2022" });

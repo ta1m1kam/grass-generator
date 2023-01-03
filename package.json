@@ -1,6 +1,6 @@
 {
   "name": "grass-generator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Drawing grass figure like Github contributions in svg or canvas.",
   "main": "lib/index.js",
   "scripts": {
