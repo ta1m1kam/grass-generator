@@ -1,7 +1,7 @@
 {
   "name": "grass-generator",
   "version": "1.0.0",
-  "description": "",
+  "description": "Drawing grass figure like Github contributions in svg or canvas.",
   "main": "lib/index.js",
   "scripts": {
     "prebuild": "rimraf lib",
@@ -17,6 +17,12 @@
   "bugs": {
     "url": "https://github.com/ta1m1kam/grass-generator/issues"
   },
+  "keywords": [
+    "github grass",
+    "canvas",
+    "svg",
+    "github"
+  ],
   "devDependencies": {
     "@types/node": "^18.11.18",
     "@typescript-eslint/eslint-plugin": "^5.47.1",
