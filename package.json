@@ -1,5 +1,5 @@
 {
-  "name": "@ta1m1kam/grass-generator",
+  "name": "grass-generator",
   "version": "1.0.0",
   "description": "Drawing grass figure like Github contributions in svg or canvas.",
   "main": "lib/index.js",
@@ -17,9 +17,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/ta1m1kam/grass-generator.git"
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
   },
   "bugs": {
     "url": "https://github.com/ta1m1kam/grass-generator/issues"
